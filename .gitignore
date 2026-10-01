@@ -1,0 +1,12 @@
+# derived: rebuildable via `commons reindex`
+registry/index.sqlite
+site/browse/
+
+# local-only: this host's trust policy and view — never replicated
+registry/peers.json
+registry/quarantine.log
+registry/exec-policy.json
+registry/subscriptions.json
+
+__pycache__/
+*.ots.bak

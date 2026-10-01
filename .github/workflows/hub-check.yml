@@ -1,0 +1,53 @@
+name: hub-check
+# Gate every change to this hub: data-only paths, no deletions, append-only ledgers,
+# per-signer log ownership, valid signatures, blob hashes. Signer TRUST is deliberately
+# not decided here: that stays with each maintainer's local peers.json at `commons pull`.
+#
+# pull_request_target (not pull_request) so a PR cannot edit this file to neuter its own
+# check: the workflow ALWAYS comes from the base branch. That is safe here because PR
+# content is only ever READ as data by the tool (checked out from the tool repo, never
+# from the PR); nothing from the PR is executed, and credentials are not persisted.
+# The authoritative gate remains `commons pull` on a maintainer's machine.
+on:
+  pull_request_target:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout hub (PR head as DATA only)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          path: hub
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: checkout tool
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          repository: research-common/research-commons
+          # Pinned by full commit SHA (immutable); the tag is a comment for humans.
+          # Upgrade: README.md "Upgrading the tool pin".
+          ref: c8845edf7cf7bfd3e898309143400dd012e5ba3c  # v0.2.0-alpha.1
+          path: tool
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
+        with:
+          node-version: '20'
+      - run: cd tool && npm ci --ignore-scripts --no-audit --no-fund
+      - name: tool version (lands in the CI log)
+        run: echo "tool $(git -C tool rev-parse HEAD)" && tool/bin/commons --version
+      - name: commons hub check
+        working-directory: hub
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] \
+             || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            ../tool/bin/commons hub check
+          else
+            ../tool/bin/commons hub check --base "$BASE"
+          fi

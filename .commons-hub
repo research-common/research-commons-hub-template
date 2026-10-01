@@ -1,0 +1,6 @@
+{
+  "kind": "commons-hub",
+  "name": "Research Commons hub",
+  "schema": "rc.v1",
+  "tool": "research-common/research-commons"
+}
