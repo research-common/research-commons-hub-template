@@ -31,7 +31,7 @@ jobs:
           repository: research-common/research-commons
           # Pinned by full commit SHA (immutable); the tag is a comment for humans.
           # Upgrade: README.md "Upgrading the tool pin".
-          ref: 780778890b5b9c8d4b0feef4c1b710a119f85079  # v0.3.0-alpha.1
+          ref: 036eb8a9a9c22a465b680d85f564d503fbc035a0  # v0.4.0-alpha.1
           path: tool
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
