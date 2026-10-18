@@ -1,0 +1,6 @@
+# Byte-exact data. Git must never convert line endings, run filters or attempt
+# text merges on stored objects: a blob is named by the hash of its exact bytes,
+# and a statement by the hash of its exact canonical form.
+blobs/**       binary
+statements/**  -text -merge
+rc-store       -text
