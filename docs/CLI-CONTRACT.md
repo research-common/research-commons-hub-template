@@ -43,8 +43,10 @@ reports each one; it never stops at the first refusal.
 The **data surface** of a hub is exactly:
 
 - `blobs/sha256/<64 lowercase hex>`, the blob whose sha256 is that name;
-- `statements/<signer-dir>/<64 lowercase hex>`, one statement line whose id is that name, where
+- `statements/<signer-dir>/<64 lowercase hex>`, one statement whose id is that name, where
   `<signer-dir>` is the statement's `signer` with `:` replaced by `-` (`ed25519-<64 hex>` or `0x<40 hex>`).
+  The file holds exactly the statement's canonical bytes (wire note §1, §2, `sig` included), with no
+  trailing newline. These are the paths the tool's local store uses, so a hub clone is also a working store.
 
 The **control plane** is every other path the template ships or a maintainer adds: `hub-policy.json`,
 `rc-store`, `README.md`, `LICENSE`, `CONTRIBUTING.md`, `docs/`, `.github/`, `.gitignore`, `.gitattributes`.
@@ -54,7 +56,7 @@ The **control plane** is every other path the template ships or a maintainer add
 | H-20 | added statement that fails to parse, is not canonical, fails its signature, or whose id differs from its file name | refused | intrinsic · `malformed statement` / `bad signature` / `hash mismatch` · that file | C-core-09, C-core-12, C-core-110 |
 | H-21 | added statement under another key's directory | refused | intrinsic · `line in another key's log` · that file | C-core-14, C-core-110 |
 | H-22 | added statement over the single-statement size bound, or any object over a `limits` entry | refused | operational · `size limit <n>` (name and value) · that object | C-core-112 |
-| H-23 | added statement of an `rc` major, `alg` or `crit` extension the tool does not implement | admitted | labelled `unsupported`; placed in its signer's log by the linkage contract | wire §6 |
+| H-23 | added statement of an `rc` major, `alg` or `crit` extension the tool does not implement | admitted | labelled `unsupported`; placed in its signer's log by the linkage contract. Its file name must still equal its id (computable in every major, wire §6); its directory cannot be checked against a signature the tool cannot verify, so it is attributed to nobody until a verified line of that key names it | wire §6 |
 | H-24 | added statement whose predecessor (or a `merges` entry) is not in the evaluated set | admitted | labelled `detached: waiting for …`, the gap named; nothing refused for being detached | C-core-143 |
 | H-25 | added statement forking its signer's log, or with an incoherent `ts` | admitted | labelled `FORK` / `incoherent`; a fork is never a refusal | C-core-106, C-core-127 |
 | H-26 | added blob whose bytes do not hash to its name | refused | intrinsic · `hash mismatch: expected <h1>, got <h2>` · that file | C-core-110, C-core-117 |

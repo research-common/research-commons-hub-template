@@ -47,7 +47,10 @@ Set `"blobs": "external-only"` in `hub-policy.json` for that configuration.
 2. Edit `hub-policy.json` if the defaults do not suit you (`docs/hub-policy.md` explains each field). Commit
    it on the default branch.
 3. Pin the tool in `.github/workflows/hub-check.yml` (see *Upgrading the tool pin*).
-4. Protect the default branch: require the `hub-check` job and a review before merging.
+4. Protect the default branch: require the `hub-check` job and a review before merging. A pull request that
+   changes only control-plane files (the policy, this README, the workflow) passes `hub-check` with a
+   notice, because CI has nothing to admit; the review is what guards those files. A `CODEOWNERS` entry for
+   `hub-policy.json` and `.github/` makes that review explicit.
 5. Say in this README what the hub is for and how it selects what it admits: curated by its maintainers,
    by a published rule anyone can re-apply, or a completeness claim others can check. This is prose for
    people. The tool shows only a selection someone signed (a collection declares one in its editions), so a
