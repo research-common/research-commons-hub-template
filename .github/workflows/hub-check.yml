@@ -1,23 +1,72 @@
 name: hub-check
-# Gate every change to this hub: data-only paths, no deletions, append-only ledgers,
-# per-signer log ownership, valid signatures, blob hashes. Signer TRUST is deliberately
-# not decided here: that stays with each maintainer's local peers.json at `commons pull`.
+# Gate every change to this hub with `commons hub check` (contract: docs/CLI-CONTRACT.md).
+# Each object in the change goes through the tool's one validation core: signatures,
+# statement ids, blob hashes, log ownership, the data-surface path rules, and this hub's
+# own admission policy (hub-policy.json) read from the BASE revision, never from the PR.
+# Signer TRUST is deliberately not decided here: each maintainer applies their own at
+# `commons pull`.
 #
-# pull_request_target (not pull_request) so a PR cannot edit this file to neuter its own
-# check: the workflow ALWAYS comes from the base branch. That is safe here because PR
-# content is only ever READ as data by the tool (checked out from the tool repo, never
-# from the PR); nothing from the PR is executed, and credentials are not persisted.
-# The authoritative gate remains `commons pull` on a maintainer's machine.
+# Hardening, kept from the alpha template:
+# - pull_request_target, not pull_request, so a PR cannot edit this file to neuter its own
+#   check: the workflow always comes from the base branch.
+# - The PR head is checked out as DATA only. Nothing from it is executed, built or sourced;
+#   the tool is built from its own repository at a pinned commit BEFORE the PR is fetched.
+# - The tool and every action are pinned by full commit SHA.
+# - No credentials: read-only token, never persisted, never passed to the check. No cache
+#   (a cache written under pull_request_target is a poisoning route into later runs).
+#
+# >>> DRAFT. The next-format CLI has not been released. The tool pin below is a PLACEHOLDER
+# >>> and the first step fails on purpose until a maintainer sets a real release commit.
 on:
   pull_request_target:
   push:
     branches: [main]
 permissions:
   contents: read
+concurrency:
+  group: hub-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # PLACEHOLDER: replace with the full 40-character commit of a next-format release, and
+      # the tag in the comment. README.md, "Upgrading the tool pin".
+      TOOL_REF: "0000000000000000000000000000000000000000"  # vX.Y.Z (placeholder)
     steps:
+      - name: refuse to run on the placeholder pin
+        run: |
+          if [ "$TOOL_REF" = "0000000000000000000000000000000000000000" ]; then
+            echo "::error::hub-check.yml still pins the placeholder tool commit; set TOOL_REF to a release commit (README.md, 'Upgrading the tool pin')."
+            exit 1
+          fi
+          case "$TOOL_REF" in
+            *[!0-9a-f]*|"") echo "::error::TOOL_REF must be a full lowercase commit SHA"; exit 1 ;;
+          esac
+          [ "${#TOOL_REF}" -eq 40 ] || { echo "::error::TOOL_REF must be 40 hex characters"; exit 1; }
+
+      - name: checkout tool (pinned)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          repository: research-common/research-commons
+          ref: ${{ env.TOOL_REF }}
+          path: tool
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16  # v6.5.0
+        with:
+          go-version-file: tool/go.mod
+          cache: false
+      - name: build tool
+        working-directory: tool
+        env:
+          CGO_ENABLED: "0"
+          GOFLAGS: -mod=readonly
+        run: |
+          go build -trimpath -o "$RUNNER_TEMP/commons" ./cmd/commons
+          echo "tool $(git rev-parse HEAD)"
+          "$RUNNER_TEMP/commons" --version
+
       - name: checkout hub (PR head as DATA only)
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
         with:
@@ -25,29 +74,17 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - name: checkout tool
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
-        with:
-          repository: research-common/research-commons
-          # Pinned by full commit SHA (immutable); the tag is a comment for humans.
-          # Upgrade: README.md "Upgrading the tool pin".
-          ref: 036eb8a9a9c22a465b680d85f564d503fbc035a0  # v0.4.0-alpha.1
-          path: tool
-          persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4.4.0
-        with:
-          node-version: '20'
-      - run: cd tool && npm ci --ignore-scripts --no-audit --no-fund
-      - name: tool version (lands in the CI log)
-        run: echo "tool $(git -C tool rev-parse HEAD)" && tool/bin/commons --version
       - name: commons hub check
         working-directory: hub
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        # Exit codes (docs/CLI-CONTRACT.md 2.3): 0 admitted · 1 an object refused ·
+        # 2 the check could not start · 3 admission of some object could not be decided.
+        # Every non-zero code fails the job.
         run: |
           if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] \
              || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
-            ../tool/bin/commons hub check
+            "$RUNNER_TEMP/commons" hub check
           else
-            ../tool/bin/commons hub check --base "$BASE"
+            "$RUNNER_TEMP/commons" hub check --base "$BASE"
           fi
