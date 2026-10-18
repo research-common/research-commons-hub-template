@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/research-common/research-commons-hub-template/docs/hub-policy.schema.json",
+  "title": "Research Commons hub admission policy, version 1 (draft)",
+  "description": "The hub's own admission policy. Control plane: read by `commons hub check` from the BASE revision of a change, never from the change itself, and never accepted from a package. The file is parsed by the tool's strict JSON reader (duplicate keys refused, integers only); a file that is present but does not parse, or that carries a field this schema does not define, makes the check exit 2 before any work. An absent file means the defaults below.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy"],
+  "properties": {
+    "policy": {
+      "description": "Format tag of this file.",
+      "const": "rc-hub-policy/1"
+    },
+    "blobs": {
+      "description": "Whether this hub stores blob bytes. `external-only` is the configuration in which the hub carries statements (including `holds` statements naming external locations) and no blobs; a blob file in a change is then refused under reader policy, scope that file.",
+      "enum": ["stored", "external-only"],
+      "default": "stored"
+    },
+    "limits": {
+      "description": "Operational limits, by name. Each name is one the tool documents (`commons status --limits` lists the names and the tool's defaults); an undocumented name is a configuration error (exit 2). A value is an integer; an object over a limit is refused with class `operational`, the limit name and value printed. No value is set here by default: the defaults are the tool's, and project-wide size policy is still open.",
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_]{0,63}$"},
+      "additionalProperties": {"type": "integer", "minimum": 0},
+      "default": {}
+    },
+    "not_served": {
+      "description": "Content this hub does not serve. A change that adds a blob with a listed digest is refused under reader policy, scope that blob; a change that deletes such a blob is admitted, and it is the only deletion a change may make (a delivery never removes what the hub holds), so the entry must already be in the base revision's policy. Statements about the content are never refused on this basis and are kept: not serving bytes is availability, not erasure, and the content is shown as not held here (policy).",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["digest"],
+        "properties": {
+          "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "reason": {"type": "string", "description": "The maintainers' own note, displayed beside the token."}
+        }
+      },
+      "default": []
+    },
+    "series": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "refuse_premature_freeze": {
+          "description": "When true, a series edition whose declared `frozen_before` is later than the boundary its members' finality rules compute is refused under reader policy, scope that edition (it remains a valid statement elsewhere). A boundary that cannot be computed (`unchecked`, `not comparable`) is not a pass: the check reports it as could-not-check.",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "default": {"refuse_premature_freeze": false}
+    }
+  }
+}

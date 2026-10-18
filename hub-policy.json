@@ -1,0 +1,9 @@
+{
+  "blobs": "stored",
+  "limits": {},
+  "not_served": [],
+  "policy": "rc-hub-policy/1",
+  "series": {
+    "refuse_premature_freeze": false
+  }
+}

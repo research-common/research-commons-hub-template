@@ -1,0 +1,16 @@
+{
+  "blobs": "stored",
+  "limits": {
+    "blob_bytes": 104857600
+  },
+  "not_served": [
+    {
+      "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reason": "example entry: the empty blob, listed only to show the shape"
+    }
+  ],
+  "policy": "rc-hub-policy/1",
+  "series": {
+    "refuse_premature_freeze": true
+  }
+}
