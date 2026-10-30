@@ -77,14 +77,24 @@ jobs:
       - name: commons hub check
         working-directory: hub
         env:
+          EVENT: ${{ github.event_name }}
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         # Exit codes (docs/CLI-CONTRACT.md 2.3): 0 admitted · 1 an object refused ·
         # 2 the check could not start · 3 admission of some object could not be decided.
         # Every non-zero code fails the job.
+        #
+        # Without --base the policy is read at HEAD (H-12). On a push to main that is main's own
+        # policy, so a full check of the pushed tree is correct when the previous commit is
+        # unknown (first push, force push). On a pull request HEAD is the PR head: running
+        # without the base would judge the PR under its own hub-policy.json. That case fails
+        # closed with exit 2 (could not start) instead.
         run: |
-          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] \
-             || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
-            "$RUNNER_TEMP/commons" hub check
-          else
-            "$RUNNER_TEMP/commons" hub check --base "$BASE"
+          if [ -n "$BASE" ] && [ "$BASE" != "0000000000000000000000000000000000000000" ] \
+             && git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            exec "$RUNNER_TEMP/commons" hub check --base "$BASE"
           fi
+          if [ "$EVENT" = "push" ]; then
+            exec "$RUNNER_TEMP/commons" hub check
+          fi
+          echo "::error::base commit '$BASE' is not available for this $EVENT run; refusing to check the change under its own policy (CLI-CONTRACT H-12)."
+          exit 2
