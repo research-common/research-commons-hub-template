@@ -48,8 +48,9 @@ The **data surface** of a hub is exactly:
   The file holds exactly the statement's canonical bytes (wire note §1, §2, `sig` included), with no
   trailing newline. These are the paths the tool's local store uses, so a hub clone is also a working store.
 
-The **control plane** is every other path the template ships or a maintainer adds: `hub-policy.json`,
-`rc-store`, `README.md`, `LICENSE`, `CONTRIBUTING.md`, `docs/`, `.github/`, `.gitignore`, `.gitattributes`.
+The **control plane** is every other path the template ships: `hub-policy.json`, `rc-store`, `README.md`,
+`LICENSE`, `CONTRIBUTING.md`, `docs/`, `.github/`, `.gitignore`, `.gitattributes`, plus the paths the base
+revision's `hub-policy.json` lists in `control_plane` (a maintainer's own root files, such as `CITATION.cff`).
 
 | id | Situation in the change | Verdict | Class · reason · scope | Cases |
 |---|---|---|---|---|

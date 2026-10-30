@@ -38,12 +38,24 @@
       },
       "default": []
     },
+    "control_plane": {
+      "description": "Paths this hub's maintainers add to the control plane, beside the ones the template ships (docs/CLI-CONTRACT.md §2.2): root files such as `CITATION.cff` or `NOTICE`, or directories given as a prefix ending in `/`. Added, never subtracted: the template's own paths stay control plane. Like the rest of this file it is read at the base revision, so a change cannot add a path for itself. An entry may not name or cover the data surface (`blobs`, `statements`) or the layout marker `rc-store`; an entry that does, an unsafe path (absolute, `..`, `.` or empty segments, backslash, NUL), a repeated entry, or more than 256 entries makes the check exit 2 naming the entry. A change to a control-plane path is reported and not applied.",
+      "type": "array",
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!/)(?!.*\\\\)(?!(blobs|statements|rc-store)(/|$))(?!(.*/)?\\.{1,2}(/|$))(?!.*//)[^\\u0000]+$"
+      },
+      "default": []
+    },
     "series": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "refuse_premature_freeze": {
-          "description": "When true, a series edition whose declared `frozen_before` is later than the boundary its members' finality rules compute is refused under reader policy, scope that edition (it remains a valid statement elsewhere). A boundary that cannot be computed (`unchecked`, `not comparable`) is not a pass: the check reports it as could-not-check.",
+          "description": "When true, a series edition whose declared `frozen_before` is later than the boundary its members' finality rules compute is refused under reader policy, scope that edition (it remains a valid statement elsewhere). A boundary that cannot be computed (`unchecked`, `not comparable`) is not a pass: the check reports it as could-not-check. The first next-format tool ships no finality re-check for series segments, so with this set every added series edition is could-not-check (exit 3) until a re-check ships.",
           "type": "boolean",
           "default": false
         }
