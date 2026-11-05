@@ -1,10 +1,9 @@
 # Research Commons hub (template, next format)
 
-> **Draft for the next format.** This branch is a template for hubs in the next format of Research
-> Commons, which is specified in the tool repository's design notes and not yet released. The tool it calls
-> does not exist as a command yet: `.github/workflows/hub-check.yml` pins a placeholder and fails until a
-> release is pinned, and `docs/CLI-CONTRACT.md` says what that release must provide. For a hub you can run
-> today, use the template's `main` branch, which targets the alpha.
+> **Next format, alpha.** This branch is a template for hubs in the next format of Research Commons, first
+> released as the tool's `v0.5.0-alpha.1`. `.github/workflows/hub-check.yml` pins that release by commit, and
+> `docs/CLI-CONTRACT.md` states what the template needs from the tool. The format may still change between
+> alpha releases. For a hub on the previous alpha, use the template's `main` branch.
 
 > **Template.** Click **Use this template** to create a hub for your topic, then rename it in this heading.
 

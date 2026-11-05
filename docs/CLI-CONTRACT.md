@@ -1,8 +1,7 @@
 # What this template needs from the `commons` tool
 
-> **Draft contract.** The next format of Research Commons has no command-line tool yet. This file states
-> what `.github/workflows/hub-check.yml` and `README.md` assume, so the tool can be built to it and this
-> template can be checked against the tool once it exists. Where the tool's own documentation and this file
+> **Contract.** This file states what `.github/workflows/hub-check.yml` and `README.md` assume from the
+> `commons` tool, first met by its `v0.5.0-alpha.1` release. Where the tool's own documentation and this file
 > disagree after a release, the template is wrong and gets fixed. Section references are to the tool's design
 > notes (`docs/DESIGN-notes-*.md`) and conformance cases to `docs/CONFORMANCE.md` in the tool repository.
 
@@ -13,7 +12,7 @@ Each requirement has an id (`H-nn`) so a test in the tool can name the one it ch
 | id | Requirement |
 |---|---|
 | H-01 | The repository builds a single static binary with `CGO_ENABLED=0 go build -trimpath -o <out> ./cmd/commons`, using only modules pinned by its `go.sum`. |
-| H-02 | `commons --version` exits 0 and prints the tool version and the commit it was built from on one line. |
+| H-02 | `commons --version` exits 0 and prints the tool version and the commit it was built from (one `name: value` line each; with `--json`, one object with `version` and `commit`). An unstamped build reports the release's version, not a placeholder. |
 | H-03 | `commons hub check` uses the `git` executable present on the machine to read revisions (`git cat-file`, `git diff --raw -z`, `git merge-base`). It reads objects as raw bytes: no text conversion, no `textconv`, no filters, no attributes or configuration taken from the checked tree. No hook runs. |
 
 ## 2. `commons hub check`

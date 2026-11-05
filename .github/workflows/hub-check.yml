@@ -31,9 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      # PLACEHOLDER: replace with the full 40-character commit of a next-format release, and
-      # the tag in the comment. README.md, "Upgrading the tool pin".
-      TOOL_REF: "0000000000000000000000000000000000000000"  # vX.Y.Z (placeholder)
+      # The tool release this hub checks with: a full 40-character commit, the tag in the comment.
+      # README.md, "Upgrading the tool pin".
+      TOOL_REF: "52c0f245f384637ffe0ccc23c1d79c0829a938d6"  # v0.5.0-alpha.1
     steps:
       - name: refuse to run on the placeholder pin
         run: |
