@@ -59,8 +59,7 @@
           "type": "boolean",
           "default": false
         }
-      },
-      "default": {"refuse_incomplete": false}
+      }
     },
     "series": {
       "type": "object",
