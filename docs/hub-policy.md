@@ -44,8 +44,10 @@ it; the citation is beside it.
 | `series.refuse_premature_freeze` | `false` | Refuse a growing-series edition whose declared `frozen_before` is later than the boundary its members' finality rules compute. The edition stays a valid statement everywhere else. A boundary the check cannot compute is reported as could-not-check (exit 3), never as a pass. **The first next-format tool ships no finality re-check for series segments**, so with this set every added series edition is could-not-check (exit 3) until one ships; leave it `false` unless you want series editions held for review. | claims-model §8 (growing series); C-core-104 |
 | `selection.refuse_incomplete` | `false` | **Needs a tool newer than v0.5.0-alpha.1** (the alpha.1 tool treats this field as undefined: exit 2). Refuse an edition whose `completeness` claim ("every reading of class C from source S in window W") fails against the readings this hub holds: a reading in scope that the edition does not list. The edition stays a valid statement everywhere else. A claim the check cannot decide (a reading with no readable position or source, or a claim with no scope) is reported as could-not-check (exit 3), never as a pass. The check uses only statements the hub holds; it says nothing about readings it has not seen. Editions with no completeness claim are unaffected. | claims-model §6 (3), §8; C-core-59, C-core-60 |
 
-`docs/hub-policy.example.json` shows every field set. Its `limits` entry uses `blob_bytes` as a stand-in:
-the tool has not published its limit names yet, and project-wide size policy is still open.
+`docs/hub-policy.example.json` shows every field set except `selection`, which it leaves out while the template
+pins v0.5.0-alpha.1 (that tool exits 2 on it). For the same reason the schema gives the `selection` object no
+default of its own, so a tool that fills in schema defaults does not write it. The example's `limits` entry uses
+`blob_bytes` as a stand-in: the tool has not published its limit names yet, and project-wide size policy is still open.
 
 ## What is deliberately not in this file
 
