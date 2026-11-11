@@ -10,6 +10,9 @@
     }
   ],
   "policy": "rc-hub-policy/1",
+  "selection": {
+    "refuse_incomplete": true
+  },
   "series": {
     "refuse_premature_freeze": true
   }

@@ -55,7 +55,7 @@
       "additionalProperties": false,
       "properties": {
         "refuse_incomplete": {
-          "description": "When true, an edition whose completeness claim fails against the readings this hub holds is refused under reader policy, scope that edition (it remains a valid statement elsewhere); a claim that cannot be checked is could-not-check (exit 3). Not understood by v0.5.0-alpha.1 (exit 2 if present): set it only with a newer pinned tool.",
+          "description": "When true, an edition whose completeness claim fails against the readings this hub holds is refused under reader policy, scope that edition (it remains a valid statement elsewhere); a claim that cannot be checked is could-not-check (exit 3). Needs tool v0.5.0-alpha.2 or later; v0.5.0-alpha.1 exits 2 if it is present.",
           "type": "boolean",
           "default": false
         }
