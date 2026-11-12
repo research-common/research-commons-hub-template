@@ -71,7 +71,7 @@
           "default": false
         },
         "source_profiles": {
-          "description": "Source profiles (rc-source-profile/1 blobs) this hub uses to read growing-series segments' finality rules. Read at the base revision; each blob must already be held there. At most 64. Needs the tool release after v0.5.0-alpha.2; earlier tools exit 2 if it is present.",
+          "description": "Source profiles (rc-source-profile/1 blobs) this hub uses to read growing-series segments' finality rules. Read at the base revision; each blob must already be held there. At most 64. Needs tool v0.5.0-alpha.3 or later; earlier tools exit 2 if it is present.",
           "type": "array",
           "maxItems": 64,
           "uniqueItems": true,

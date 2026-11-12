@@ -1,7 +1,7 @@
 # Research Commons hub (template, next format)
 
 > **Next format, alpha.** This branch is a template for hubs in the next format of Research Commons, first
-> released as the tool's `v0.5.0-alpha.1`. `.github/workflows/hub-check.yml` pins a release (now `v0.5.0-alpha.2`) by commit, and
+> released as the tool's `v0.5.0-alpha.1`. `.github/workflows/hub-check.yml` pins a release (now `v0.5.0-alpha.3`) by commit, and
 > `docs/CLI-CONTRACT.md` states what the template needs from the tool. The format may still change between
 > alpha releases. For a hub on the previous alpha, use the template's `main` branch.
 
