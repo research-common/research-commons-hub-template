@@ -33,7 +33,7 @@ jobs:
     env:
       # The tool release this hub checks with: a full 40-character commit, the tag in the comment.
       # README.md, "Upgrading the tool pin".
-      TOOL_REF: "f894fc5459bc93d5d223bad5fb43bb9a34d80ecb"  # v0.5.0-alpha.4
+      TOOL_REF: "bb30355d156c92ca53762cda3e13c9cde327df0b"  # v0.5.0-alpha.5
     steps:
       - name: refuse to run on the placeholder pin
         run: |
