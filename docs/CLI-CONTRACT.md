@@ -72,6 +72,7 @@ revision's `hub-policy.json` lists in `control_plane` (a maintainer's own root f
 | H-34b | as H-34a, but the claim cannot be decided (no scope; a reading with no readable position or source) | could not check | the edition named with the token; never a pass | I4 |
 | H-35 | as H-34, but the boundary is `unchecked` or `not comparable` | could not check | the edition named with the token; never a pass | C-core-102, I4 |
 | H-36 | an added statement carries `intended_for` | admitted | the named edition re-applied **as held at the base revision**, and the current edition, shown side by side as the hub's computation; the publisher's recorded outcome shown as the publisher's word | C-core-98 |
+| H-36a | an added statement acts for a fixed-root identity (an `rc/2` line naming an actor; tool v0.5.0-alpha.4 or later) | admitted | labelled `actor: eligible`, `actor: denied (…)` or `actor: unknown (…)` with the evaluator's reasons, judged over the base revision's statements plus the change's admitted ones: a change may carry an identity's inception, a grant and an act under it, because the authority is the identity root key's signature, not the hub's held set. A label only: it never changes a verdict or the exit | identity profile §2.4, I8 |
 
 Rule evaluations print exactly one of `ok`, `fail`, `unchecked`. Every refusal names its class (intrinsic,
 reader policy, operational), its reason and its scope, and never suggests a blanket override (§11, §13;
@@ -87,7 +88,7 @@ The values and their meanings are the tool's (claims-model §13). For `hub check
 
 | Exit | Meaning for `hub check` | Cases |
 |---|---|---|
-| 0 | Every object in the change would be admitted, possibly with labels (`contested`, `detached`, `FORK`, `unsupported`, `unreferenced`, `unavailable`). Also: a control-plane-only change (H-33). Exit 0 says the check succeeded, not that everything referenced is valid. | C-core-135 |
+| 0 | Every object in the change would be admitted, possibly with labels (`contested`, `detached`, `FORK`, `unsupported`, `unreferenced`, `unavailable`, `actor: …`). Also: a control-plane-only change (H-33). Exit 0 says the check succeeded, not that everything referenced is valid. | C-core-135 |
 | 1 | At least one object would be refused (H-20 to H-22, H-26, H-27, H-30 to H-32, H-34): each one is a check that ran to completion and failed. | C-core-110 – C-core-112 |
 | 2 | The check did not start: unknown option, malformed argument, `--base` not a commit here, no hub root, unknown layout marker, unreadable policy file at the policy revision. Nothing is evaluated and no partial result is printed. | C-core-133a |
 | 3 | Nothing would be refused, and admission of at least one object could not be decided (H-35). The objects are named with their token. | C-core-133, I4 |
@@ -99,7 +100,7 @@ which belong to `verify`, never occur. No other value is emitted except by a cra
 
 | id | Not checked | Why |
 |---|---|---|
-| H-40 | Whether a signer is trusted, is a maintainer, or may publish here | Trust is each reader's policy and depends on the identity design, which is open. Maintainers apply their own trust at `commons pull`. |
+| H-40 | Whether a signer is trusted, is a maintainer, or may publish here | Trust is each reader's policy. An identity act's actor state is shown (H-36a) but never gates admission; maintainers apply their own trust at `commons pull`. |
 | H-41 | Future timestamps | Refused at write time by the writer (§10; C-core-105), not at a gate, where the reader's clock decides nothing about the signer's. |
 | H-42 | Time evidence quality (`anchors` proofs) | Verified by each reader against block evidence it trusts, stored locally, never transported (Bitcoin-time note §9). CI checks the `anchors` statement's validity only. |
 | H-43 | Execution | Admission is not execution (§11). CI never runs a workflow, comparator or anything else from the hub. |
