@@ -1,7 +1,8 @@
 # Local store state. A clone of this hub is also a working store for the
 # `commons` tool; these directories belong to that one machine and are never
-# replicated (journal records, corrupt copies moved aside, temporaries).
+# replicated (journal records, corrupt copies moved aside, temporaries, projection caches).
 /journal/
 /quarantine/
 /retained/
 /tmp/
+/cache/
