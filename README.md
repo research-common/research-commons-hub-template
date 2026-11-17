@@ -1,5 +1,11 @@
 # Research Commons hub (template)
 
+> [!IMPORTANT]
+> **This branch is the old 0.4 alpha template.** For a new hub, use the template's
+> [`next` branch](https://github.com/research-common/research-commons-hub-template/tree/next), which targets Research Commons
+> 1.0 (release candidate [`v1.0.0-rc.1`](https://github.com/research-common/research-commons/releases/tag/v1.0.0-rc.1)):
+> after **Use this template**, tick **Include all branches**, then make `next` your default branch. The alpha has no importer into 1.0.
+
 > **Template.** Click **Use this template** to create a hub for your topic, then rename
 > it in this heading and in `.commons-hub`. Setup: `GETTING-STARTED.md` in the tool repo.
 > Or skip the template: `commons hub init <dir>` generates the same files.
