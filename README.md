@@ -55,6 +55,9 @@ Set `"blobs": "external-only"` in `hub-policy.json` for that configuration.
    by a published rule anyone can re-apply, or a completeness claim others can check. This is prose for
    people. The tool shows only a selection someone signed (a collection declares one in its editions), so a
    hub as a whole displays as `undeclared`, which readers treat as curated.
+6. Add the GitHub topic `research-commons-hub` (repository settings, "Topics") so people can find the hub:
+   [github.com/topics/research-commons-hub](https://github.com/topics/research-commons-hub) lists every public
+   hub that sets it. A listing there is the hub's own choice, not an endorsement.
 
 ## Read it
 
