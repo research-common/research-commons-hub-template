@@ -105,6 +105,13 @@ What CI admits with a label rather than refusing: statements from a tool version
 forked (`FORK`), bytes held elsewhere (`unavailable`), and every disagreement between keys (`contested`).
 None of those is a reason to refuse valid signed data.
 
+`unavailable` is also what CI shows on the statement of a derived output whose run used a container image.
+The statement names the image by digest, and a hub holds no image bytes, so CI admits it with
+`unavailable: not held locally: sha256:…`. That is expected and is not a failure. The tool never pulls an
+image, not in CI and not in `verify --rerun`: a re-run needs the image already present in the container
+runtime of the machine that runs it, and otherwise exits 5. To re-run, pull the image by that digest first,
+then run `commons verify --rerun <id>`.
+
 Exit codes: `0` everything would be admitted · `1` at least one object refused, each named with its reason
 and scope · `2` the check could not start (bad option, unreadable policy) · `3` admission of an object
 could not be decided. Every non-zero code fails the job.
